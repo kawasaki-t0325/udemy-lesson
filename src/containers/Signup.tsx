@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { Avatar, Button, CssBaseline, TextField, Link, Grid, Typography, Container } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { withStyles, WithStyles, createStyles } from '@material-ui/core/styles';
-import { Theme } from  '@material-ui/core/styles/createMuiTheme';
+import { Theme } from '@material-ui/core/styles/createMuiTheme';
+import { Authentication } from '../modules';
 
 const styles = createStyles((theme: Theme) => ({
   '@global': {
@@ -29,7 +30,8 @@ const styles = createStyles((theme: Theme) => ({
   },
 }));
 
-interface IProps extends WithStyles { }
+interface IProps extends WithStyles {
+}
 
 interface IState {
   firstName: string,
@@ -47,6 +49,11 @@ class SignUp extends Component<IProps, IState> {
     password: '',
   };
 
+  signupWithEmail = () => {
+    const { email, password } = this.state;
+    Authentication.signupWithEmail(email, password);
+  };
+
   render() {
     const { classes } = this.props;
     const { firstName, lastName, email, password } = this.state;
@@ -61,88 +68,87 @@ class SignUp extends Component<IProps, IState> {
           <Typography component="h1" variant="h5">
             Sign up
           </Typography>
-          <form className={classes.form} noValidate>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  autoComplete="fname"
-                  name="firstName"
-                  variant="outlined"
-                  required
-                  fullWidth
-                  id="firstName"
-                  label="First Name"
-                  autoFocus
-                  value={firstName}
-                  onChange={(event) => {
-                    this.setState({ firstName: event.target.value });
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  variant="outlined"
-                  required
-                  fullWidth
-                  id="lastName"
-                  label="Last Name"
-                  name="lastName"
-                  autoComplete="lname"
-                  value={lastName}
-                  onChange={(event) => {
-                    this.setState({ lastName: event.target.value });
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  required
-                  fullWidth
-                  id="email"
-                  label="Email Address"
-                  name="email"
-                  autoComplete="email"
-                  value={email}
-                  onChange={(event) => {
-                    this.setState({ email: event.target.value });
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  required
-                  fullWidth
-                  name="password"
-                  label="Password"
-                  type="password"
-                  id="password"
-                  autoComplete="current-password"
-                  value={password}
-                  onChange={(event) => {
-                    this.setState({ password: event.target.value });
-                  }}
-                />
-              </Grid>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                autoComplete="fname"
+                name="firstName"
+                variant="outlined"
+                required
+                fullWidth
+                id="firstName"
+                label="First Name"
+                autoFocus
+                value={firstName}
+                onChange={(event) => {
+                  this.setState({ firstName: event.target.value });
+                }}
+              />
             </Grid>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-            >
-              Sign Up
-            </Button>
-            <Grid container justify="flex-end">
-              <Grid item>
-                <Link href="#" variant="body2">
-                  Already have an account? Sign in
-                </Link>
-              </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="lastName"
+                label="Last Name"
+                name="lastName"
+                autoComplete="lname"
+                value={lastName}
+                onChange={(event) => {
+                  this.setState({ lastName: event.target.value });
+                }}
+              />
             </Grid>
-          </form>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+                value={email}
+                onChange={(event) => {
+                  this.setState({ email: event.target.value });
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                value={password}
+                onChange={(event) => {
+                  this.setState({ password: event.target.value });
+                }}
+              />
+            </Grid>
+          </Grid>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+            onClick={() => this.signupWithEmail()}
+          >
+            Sign Up
+          </Button>
+          <Grid container justify="flex-end">
+            <Grid item>
+              <Link href="#" variant="body2">
+                Already have an account? Sign in
+              </Link>
+            </Grid>
+          </Grid>
         </div>
       </Container>
     );
