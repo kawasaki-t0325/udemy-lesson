@@ -50,8 +50,8 @@ class SignUp extends Component<IProps, IState> {
   };
 
   signupWithEmail = () => {
-    const { email, password } = this.state;
-    Authentication.signupWithEmail(email, password);
+    const { email, password, firstName, lastName } = this.state;
+    Authentication.signupWithEmail(email, password, firstName, lastName);
   };
 
   render() {
