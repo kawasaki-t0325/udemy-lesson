@@ -4,6 +4,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { withStyles, WithStyles, createStyles } from '@material-ui/core/styles';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { Authentication } from '../modules';
+import { ValidationUtil } from '../utils';
 
 const styles = createStyles((theme: Theme) => ({
   '@global': {
@@ -34,29 +35,72 @@ interface IProps extends WithStyles {
 }
 
 interface IState {
-  firstName: string,
-  lastName: string,
-  email: string,
-  password: string,
+  info: {
+    firstName: string,
+    lastName: string,
+    email: string,
+    password: string,
+  },
+  error: {
+    firstName: string,
+    lastName: string,
+    email: string,
+    password: string,
+  }
 }
 
 
 class SignUp extends Component<IProps, IState> {
   state = {
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
+   info: {
+     firstName: '',
+     lastName: '',
+      email: '',
+      password: '',
+    },
+    error: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
+    }
   };
 
   signupWithEmail = () => {
-    const { email, password, firstName, lastName } = this.state;
-    Authentication.signupWithEmail(email, password, firstName, lastName);
+    const { info } = this.state;
+    Authentication.signupWithEmail(info.email, info.password, info.firstName, info.lastName);
+  };
+
+  canSubmit = () => {
+    const { info, error } = this.state;
+
+    const allowInfo = Object.values(info).filter(value => {
+      return value === '';
+    }).length === 0;
+    const allowError= Object.values(error).filter(value => {
+      return value !== '';
+    }).length === 0;
+
+    return !allowInfo || !allowError;
+  };
+
+  handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const key = event.target.name;
+    const type = event.target.type;
+    const value = event.target.value;
+    const { info, error } = this.state;
+
+    this.setState({
+      info: { ...info, [key]: value }
+    });
+    this.setState({
+      error: { ...error, [key]: ValidationUtil.formValidate(type, value) }
+    });
   };
 
   render() {
     const { classes } = this.props;
-    const { firstName, lastName, email, password } = this.state;
+    const { info, error } = this.state;
 
     return (
       <Container component="main" maxWidth="xs">
@@ -79,11 +123,14 @@ class SignUp extends Component<IProps, IState> {
                 id="firstName"
                 label="First Name"
                 autoFocus
-                value={firstName}
-                onChange={(event) => {
-                  this.setState({ firstName: event.target.value });
+                value={info.firstName}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  this.handleChange(event);
                 }}
               />
+              {error.firstName && (
+                <Typography style={{ color: 'red', marginTop: 5 }}>{error.firstName}</Typography>
+              )}
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
@@ -94,11 +141,14 @@ class SignUp extends Component<IProps, IState> {
                 label="Last Name"
                 name="lastName"
                 autoComplete="lname"
-                value={lastName}
-                onChange={(event) => {
-                  this.setState({ lastName: event.target.value });
+                value={info.lastName}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  this.handleChange(event);
                 }}
               />
+              {error.lastName && (
+                <Typography style={{ color: 'red', marginTop: 5 }}>{error.lastName}</Typography>
+              )}
             </Grid>
             <Grid item xs={12}>
               <TextField
@@ -108,12 +158,16 @@ class SignUp extends Component<IProps, IState> {
                 id="email"
                 label="Email Address"
                 name="email"
+                type="email"
                 autoComplete="email"
-                value={email}
-                onChange={(event) => {
-                  this.setState({ email: event.target.value });
+                value={info.email}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  this.handleChange(event);
                 }}
               />
+              {error.email && (
+                <Typography style={{ color: 'red', marginTop: 5 }}>{error.email}</Typography>
+              )}
             </Grid>
             <Grid item xs={12}>
               <TextField
@@ -125,14 +179,18 @@ class SignUp extends Component<IProps, IState> {
                 type="password"
                 id="password"
                 autoComplete="current-password"
-                value={password}
-                onChange={(event) => {
-                  this.setState({ password: event.target.value });
+                value={info.password}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  this.handleChange(event);
                 }}
               />
+              {error.password && (
+                <Typography style={{ color: 'red', marginTop: 5 }}>{error.password}</Typography>
+              )}
             </Grid>
           </Grid>
           <Button
+            disabled={this.canSubmit()}
             type="submit"
             fullWidth
             variant="contained"
