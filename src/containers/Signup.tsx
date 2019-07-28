@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Avatar, Button, CssBaseline, TextField, Link, Grid, Typography, Container } from '@material-ui/core';
+import { Avatar, Button, CssBaseline, TextField, Link, Grid, Typography, Container, CircularProgress } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { withStyles, WithStyles, createStyles } from '@material-ui/core/styles';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
@@ -26,8 +26,19 @@ const styles = createStyles((theme: Theme) => ({
     width: '100%', // Fix IE 11 issue.
     marginTop: theme.spacing(3),
   },
+  button: {
+    width: '100%',
+    position: 'relative',
+  },
   submit: {
     margin: theme.spacing(3, 0, 2),
+  },
+  progress: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    marginTop: -9,
+    marginLeft: -12,
   },
 }));
 
@@ -46,7 +57,8 @@ interface IState {
     lastName: string,
     email: string,
     password: string,
-  }
+  },
+  loading: boolean,
 }
 
 
@@ -63,16 +75,19 @@ class SignUp extends Component<IProps, IState> {
       lastName: '',
       email: '',
       password: '',
-    }
+    },
+    loading: false,
   };
 
   signupWithEmail = () => {
     const { info } = this.state;
+    this.setState({ loading: true });
     Authentication.signupWithEmail(info.email, info.password, info.firstName, info.lastName);
+    this.setState({ loading : false });
   };
 
   canSubmit = () => {
-    const { info, error } = this.state;
+    const { info, error, loading } = this.state;
 
     const allowInfo = Object.values(info).filter(value => {
       return value === '';
@@ -81,7 +96,7 @@ class SignUp extends Component<IProps, IState> {
       return value !== '';
     }).length === 0;
 
-    return !allowInfo || !allowError;
+    return !allowInfo || !allowError || loading;
   };
 
   handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -100,7 +115,7 @@ class SignUp extends Component<IProps, IState> {
 
   render() {
     const { classes } = this.props;
-    const { info, error } = this.state;
+    const { info, error, loading } = this.state;
 
     return (
       <Container component="main" maxWidth="xs">
@@ -189,17 +204,25 @@ class SignUp extends Component<IProps, IState> {
               )}
             </Grid>
           </Grid>
-          <Button
-            disabled={this.canSubmit()}
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-            onClick={() => this.signupWithEmail()}
-          >
-            Sign Up
-          </Button>
+          <div className={classes.button}>
+            <Button
+              disabled={this.canSubmit()}
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+              onClick={() => this.signupWithEmail()}
+            >
+              Sign Up
+            </Button>
+            {loading && (
+              <CircularProgress
+                size={24}
+                className={classes.progress}
+              />
+            )}
+          </div>
           <Grid container justify="flex-end">
             <Grid item>
               <Link href="#" variant="body2">
