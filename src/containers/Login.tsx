@@ -55,14 +55,10 @@ interface IProps extends WithStyles {
 
 interface IState {
   info: {
-    firstName: string,
-    lastName: string,
     email: string,
     password: string,
   },
   error: {
-    firstName: string,
-    lastName: string,
     email: string,
     password: string,
   },
@@ -71,17 +67,13 @@ interface IState {
 }
 
 
-class SignUp extends Component<IProps, IState> {
+class Login extends Component<IProps, IState> {
   state = {
-   info: {
-     firstName: '',
-     lastName: '',
+    info: {
       email: '',
       password: '',
     },
     error: {
-      firstName: '',
-      lastName: '',
       email: '',
       password: '',
     },
@@ -94,7 +86,7 @@ class SignUp extends Component<IProps, IState> {
     const { history } = this.props;
     this.setState({ loading: true });
 
-    const result = await Authentication.signupWithEmail(info.email, info.password, info.firstName, info.lastName);
+    const result = await Authentication.signinWithEmail(info.email, info.password);
     if (result.uid) {
       history.push(PATH.TOP);
       return;
@@ -143,46 +135,9 @@ class SignUp extends Component<IProps, IState> {
             <LockOutlinedIcon/>
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign up
+            Sign in
           </Typography>
           <Grid container spacing={2} className={classes.submit}>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                autoComplete="fname"
-                name="firstName"
-                variant="outlined"
-                required
-                fullWidth
-                id="firstName"
-                label="First Name"
-                autoFocus
-                value={info.firstName}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  this.handleChange(event);
-                }}
-              />
-              {error.firstName && (
-                <Typography style={{ color: 'red', marginTop: 5 }}>{error.firstName}</Typography>
-              )}
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="lastName"
-                label="Last Name"
-                name="lastName"
-                autoComplete="lname"
-                value={info.lastName}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  this.handleChange(event);
-                }}
-              />
-              {error.lastName && (
-                <Typography style={{ color: 'red', marginTop: 5 }}>{error.lastName}</Typography>
-              )}
-            </Grid>
             <Grid item xs={12}>
               <TextField
                 variant="outlined"
@@ -232,7 +187,7 @@ class SignUp extends Component<IProps, IState> {
               className={classes.submit}
               onClick={() => this.signupWithEmail()}
             >
-              Sign Up
+              Sign In
             </Button>
             {loading && (
               <CircularProgress
@@ -243,8 +198,8 @@ class SignUp extends Component<IProps, IState> {
           </div>
           <Grid container justify="flex-end">
             <Grid item>
-              <Link href="/login" variant="body2">
-                ユーザーアカウントのある方はこちら
+              <Link href="/" variant="body2">
+                ユーザーアカウントが無い方はこちら
               </Link>
             </Grid>
           </Grid>
@@ -254,4 +209,4 @@ class SignUp extends Component<IProps, IState> {
   }
 }
 
-export default withStyles(styles)(SignUp);
+export default withStyles(styles)(Login);

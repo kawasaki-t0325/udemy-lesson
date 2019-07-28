@@ -17,6 +17,16 @@ class Authentication {
     }
     return { uid: '', error: 'ユーザー登録に失敗しました' };
   }
+
+  static signinWithEmail = async (email: string, password: string): Promise<IAuth> => {
+    const { user } = await auth.signInWithEmailAndPassword(email, password).catch(err => {
+      return err;
+    });
+    if (user) {
+      return { uid: user.uid, error: '' };
+    }
+    return { uid: '', error: 'ログインに失敗しました' };
+  }
 }
 
 export default Authentication;
