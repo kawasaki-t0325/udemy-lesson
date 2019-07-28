@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
+import History from 'history';
 import { Avatar, Button, CssBaseline, TextField, Link, Grid, Typography, Container, CircularProgress } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { withStyles, WithStyles, createStyles } from '@material-ui/core/styles';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { Authentication } from '../modules';
 import { ValidationUtil } from '../utils';
+import { PATH } from '../config';
 
 const styles = createStyles((theme: Theme) => ({
   '@global': {
@@ -40,9 +42,15 @@ const styles = createStyles((theme: Theme) => ({
     marginTop: -9,
     marginLeft: -12,
   },
+  message: {
+    padding: 10,
+    backgroundColor: '#ffebee',
+    color: '#d50000',
+  },
 }));
 
 interface IProps extends WithStyles {
+  history: History.History,
 }
 
 interface IState {
@@ -59,6 +67,7 @@ interface IState {
     password: string,
   },
   loading: boolean,
+  message: string,
 }
 
 
@@ -77,13 +86,21 @@ class SignUp extends Component<IProps, IState> {
       password: '',
     },
     loading: false,
+    message: '',
   };
 
-  signupWithEmail = () => {
+  signupWithEmail = async () => {
     const { info } = this.state;
+    const { history } = this.props;
     this.setState({ loading: true });
-    Authentication.signupWithEmail(info.email, info.password, info.firstName, info.lastName);
-    this.setState({ loading : false });
+
+    const result = await Authentication.signupWithEmail(info.email, info.password, info.firstName, info.lastName);
+    if (result.uid) {
+      history.push(PATH.TOP);
+      return;
+    }
+
+    this.setState({ loading : false, message: result.error });
   };
 
   canSubmit = () => {
@@ -115,12 +132,13 @@ class SignUp extends Component<IProps, IState> {
 
   render() {
     const { classes } = this.props;
-    const { info, error, loading } = this.state;
+    const { info, error, loading, message } = this.state;
 
     return (
       <Container component="main" maxWidth="xs">
         <CssBaseline/>
         <div className={classes.paper}>
+          {message && <Typography className={classes.message}>{message}</Typography>}
           <Avatar className={classes.avatar}>
             <LockOutlinedIcon/>
           </Avatar>
