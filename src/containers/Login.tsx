@@ -1,12 +1,23 @@
 import React, { Component } from 'react';
 import History from 'history';
-import { Avatar, Button, CssBaseline, TextField, Link, Grid, Typography, Container, CircularProgress } from '@material-ui/core';
+import {
+  Avatar,
+  Button,
+  CssBaseline,
+  TextField,
+  Link,
+  Grid,
+  Typography,
+  Container,
+  CircularProgress,
+} from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { withStyles, WithStyles, createStyles } from '@material-ui/core/styles';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { Authentication } from '../modules';
 import { ValidationUtil } from '../utils';
 import { PATH } from '../config';
+import { DefaultInput } from '../components';
 
 const styles = createStyles((theme: Theme) => ({
   '@global': {
@@ -92,7 +103,7 @@ class Login extends Component<IProps, IState> {
       return;
     }
 
-    this.setState({ loading : false, message: result.error });
+    this.setState({ loading: false, message: result.error });
   };
 
   canSubmit = () => {
@@ -101,7 +112,7 @@ class Login extends Component<IProps, IState> {
     const allowInfo = Object.values(info).filter(value => {
       return value === '';
     }).length === 0;
-    const allowError= Object.values(error).filter(value => {
+    const allowError = Object.values(error).filter(value => {
       return value !== '';
     }).length === 0;
 
@@ -115,16 +126,39 @@ class Login extends Component<IProps, IState> {
     const { info, error } = this.state;
 
     this.setState({
-      info: { ...info, [key]: value }
+      info: { ...info, [key]: value },
     });
     this.setState({
-      error: { ...error, [key]: ValidationUtil.formValidate(type, value) }
+      error: { ...error, [key]: ValidationUtil.formValidate(type, value) },
     });
   };
 
   render() {
     const { classes } = this.props;
     const { info, error, loading, message } = this.state;
+
+    const emailAndPassword = [
+      {
+        id: "email",
+        label: "Email Address",
+        name: "email",
+        type: "email",
+        autoComplete: "email",
+        value: info.email,
+        handleChange: this.handleChange,
+        message: error.email,
+      },
+      {
+        name: "password",
+        label: "Password",
+        type: "password",
+        id: "password",
+        autoComplete: "current-password",
+        value: info.password,
+        handleChange: this.handleChange,
+        message: error.password,
+      },
+    ];
 
     return (
       <Container component="main" maxWidth="xs">
@@ -138,44 +172,23 @@ class Login extends Component<IProps, IState> {
             Sign in
           </Typography>
           <Grid container spacing={2} className={classes.submit}>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                type="email"
-                autoComplete="email"
-                value={info.email}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  this.handleChange(event);
-                }}
-              />
-              {error.email && (
-                <Typography style={{ color: 'red', marginTop: 5 }}>{error.email}</Typography>
-              )}
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                value={info.password}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  this.handleChange(event);
-                }}
-              />
-              {error.password && (
-                <Typography style={{ color: 'red', marginTop: 5 }}>{error.password}</Typography>
-              )}
-            </Grid>
+            {emailAndPassword.map((item, index) => {
+              return (
+                <Grid key={index} item xs={12}>
+                  <DefaultInput
+                    autoComplete={item.autoComplete}
+                    type={item.type}
+                    name={item.name}
+                    id={item.id}
+                    label={item.label}
+                    value={item.value}
+                    handleChange={item.handleChange}
+                    message={item.message}
+                  />
+                </Grid>
+              );
+            })}
+
           </Grid>
           <div className={classes.button}>
             <Button

@@ -7,6 +7,7 @@ import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { Authentication } from '../modules';
 import { ValidationUtil } from '../utils';
 import { PATH } from '../config';
+import { DefaultInput } from '../components';
 
 const styles = createStyles((theme: Theme) => ({
   '@global': {
@@ -134,6 +135,51 @@ class SignUp extends Component<IProps, IState> {
     const { classes } = this.props;
     const { info, error, loading, message } = this.state;
 
+    const nameInfo = [
+      {
+        autoComplete: "fname",
+        name: "firstName",
+        id: "firstName",
+        type: "text",
+        label: "First Name",
+        value: info.firstName,
+        handleChange: this.handleChange,
+        message: error.firstName,
+      },
+      {
+        autoComplete: "lname",
+        name: "lastName",
+        id: "lastName",
+        type: "text",
+        label: "Last Name",
+        value: info.lastName,
+        handleChange: this.handleChange,
+        message: error.lastName,
+      }
+    ];
+    const emailAndPassword = [
+      {
+        id: "email",
+        label: "Email Address",
+        name: "email",
+        type: "email",
+        autoComplete: "email",
+        value: info.email,
+        handleChange: this.handleChange,
+        message: error.email,
+      },
+      {
+        name: "password",
+        label: "Password",
+        type: "password",
+        id: "password",
+        autoComplete: "current-password",
+        value: info.password,
+        handleChange: this.handleChange,
+        message: error.password,
+      },
+    ];
+
     return (
       <Container component="main" maxWidth="xs">
         <CssBaseline/>
@@ -146,81 +192,38 @@ class SignUp extends Component<IProps, IState> {
             Sign up
           </Typography>
           <Grid container spacing={2} className={classes.submit}>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                autoComplete="fname"
-                name="firstName"
-                variant="outlined"
-                required
-                fullWidth
-                id="firstName"
-                label="First Name"
-                autoFocus
-                value={info.firstName}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  this.handleChange(event);
-                }}
-              />
-              {error.firstName && (
-                <Typography style={{ color: 'red', marginTop: 5 }}>{error.firstName}</Typography>
-              )}
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="lastName"
-                label="Last Name"
-                name="lastName"
-                autoComplete="lname"
-                value={info.lastName}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  this.handleChange(event);
-                }}
-              />
-              {error.lastName && (
-                <Typography style={{ color: 'red', marginTop: 5 }}>{error.lastName}</Typography>
-              )}
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                type="email"
-                autoComplete="email"
-                value={info.email}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  this.handleChange(event);
-                }}
-              />
-              {error.email && (
-                <Typography style={{ color: 'red', marginTop: 5 }}>{error.email}</Typography>
-              )}
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                value={info.password}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  this.handleChange(event);
-                }}
-              />
-              {error.password && (
-                <Typography style={{ color: 'red', marginTop: 5 }}>{error.password}</Typography>
-              )}
-            </Grid>
+            {nameInfo.map((item, index) => {
+              return (
+                <Grid item key={index} xs={12} sm={6}>
+                  <DefaultInput
+                    autoComplete={item.autoComplete}
+                    type={item.type}
+                    name={item.name}
+                    id={item.id}
+                    label={item.label}
+                    value={item.value}
+                    handleChange={item.handleChange}
+                    message={item.message}
+                  />
+                </Grid>
+              );
+            })}
+            {emailAndPassword.map((item, index) => {
+              return (
+                <Grid item key={index} xs={12}>
+                  <DefaultInput
+                    autoComplete={item.autoComplete}
+                    type={item.type}
+                    name={item.name}
+                    id={item.id}
+                    label={item.label}
+                    value={item.value}
+                    handleChange={item.handleChange}
+                    message={item.message}
+                  />
+                </Grid>
+              );
+            })}
           </Grid>
           <div className={classes.button}>
             <Button
